@@ -14,4 +14,4 @@ This mod adds the Smallfry Salmonid from Splatoon 3 Salmon Run into Lethal Compa
 
 ## Credits & Acknowledgements
 - [RiskiVR](https://riskivr.com) - Main mod developer
-- [XuXiolan](https://thunderstore.io/c/lethal-company/p/XuXiaolan/) & [Robyn](https://mamallama.dev/) - ty for the help :3
+- [XuXiaolan](https://thunderstore.io/c/lethal-company/p/XuXiaolan/) & [Robyn](https://mamallama.dev/) - ty for the help :3
