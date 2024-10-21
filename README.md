@@ -3,7 +3,7 @@
 <img src="https://raw.githubusercontent.com/RiskiVR/Lethal_SmallfryEnemy/refs/heads/media/images/Lethal_SmallfryEnemy.gif" width="100%">
 
 ## What does it do?
-This mod adds the Smallfry Salmonoid from Splatoon 3 Salmon Run into Lethal Company as an enemy :3
+This mod adds the Smallfry Salmonid from Splatoon 3 Salmon Run into Lethal Company as an enemy :3
 
 - [Project Link](https://github.com/RiskiVR/Lethal_SmallfryEnemy)
 - [Thunderstore](https://thunderstore.io/c/lethal-company/p/RiskiVR/SmallfryEnemy/)
