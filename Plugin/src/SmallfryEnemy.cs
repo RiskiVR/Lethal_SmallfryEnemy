@@ -1,3 +1,4 @@
+using System.Collections;
 using GameNetcodeStuff;
 using UnityEngine;
 using Unity.Netcode.Components;
@@ -40,13 +41,13 @@ public class SmallfryEnemy : EnemyAI
     }
     public void Idle()
     {
-        var colliders = Physics.OverlapSphere(transform.position, 50, LayerMask.GetMask("Player"), QueryTriggerInteraction.Collide);
+        var colliders = Physics.OverlapSphere(transform.position, 25, LayerMask.GetMask("Player"), QueryTriggerInteraction.Collide);
         foreach (Collider c in colliders)
         {
             if (c.gameObject.TryGetComponent(out PlayerControllerB player) && player.isPlayerControlled && !player.isPlayerDead)
             {
                 targetPlayer = player;
-                agent.speed = 7;
+                agent.speed = 4;
                 creatureVoice.PlayOneShot(vo[Random.Range(0, vo.Length)]);
                 creatureSFX.volume = 1;
                 creatureAnimator.SetBool("Walk", true);
@@ -56,8 +57,9 @@ public class SmallfryEnemy : EnemyAI
     }
     public void Active()
     {
-        if (targetPlayer == null)
+        if (targetPlayer == null || Vector3.Distance(targetPlayer.transform.position, transform.position) > 25f)
         {
+            targetPlayer = null;
             creatureAnimator.SetBool("Walk", false);
             creatureSFX.volume = 0;
             agent.speed = 0;
@@ -80,5 +82,42 @@ public class SmallfryEnemy : EnemyAI
         creatureAnimator.SetInteger("AttackInt", Random.Range(0, 2));
         networkAnimator.SetTrigger("Attack");
         attackCooldown = 0.75f;
+    }
+
+    public override void HitEnemy(int force = 1, PlayerControllerB playerWhoHit = null, bool playHitSFX = false, int hitID = -1)
+    {
+        base.HitEnemy(force, playerWhoHit, playHitSFX, hitID);
+        Plugin.Logger.LogInfo($"Hit force: {force}");
+        enemyHP -= force;
+        creatureVoice.PlayOneShot(vo[Random.Range(0, vo.Length)]);
+        if (enemyHP <= 0) KillEnemyOnOwnerClient();
+    }
+
+    public override void KillEnemy(bool destroy = false)
+    {
+        base.KillEnemy(destroy);
+        creatureSFX.volume = 0;
+        StartCoroutine(AnimatorSlowSpeed());
+        StartCoroutine(FallOverLol());
+    }
+
+    IEnumerator AnimatorSlowSpeed()
+    {
+        while (creatureAnimator.speed > 0)
+        {
+            creatureAnimator.speed -= 1f * Time.deltaTime;
+            yield return null;
+        }
+    }
+
+    IEnumerator FallOverLol()
+    {
+        float rotateTime = 0f;
+        while (rotateTime < 0.2f)
+        {
+            rotateTime += Time.deltaTime;
+            transform.Rotate(-350f * Time.deltaTime, 0, 0);
+            yield return null;
+        }
     }
 }
