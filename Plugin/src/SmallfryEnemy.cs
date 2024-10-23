@@ -2,22 +2,21 @@ using System.Collections;
 using GameNetcodeStuff;
 using UnityEngine;
 using Unity.Netcode.Components;
+using SmallfryBrain;
 
 namespace SmallfryEnemy;
 
 public class SmallfryEnemy : EnemyAI
 {
-    [SerializeField] AudioClip[] vo;
-    [SerializeField] NetworkAnimator networkAnimator;
+    [SerializeField] public AudioClip[] vo;
+    [SerializeField] public NetworkAnimator networkAnimator;
+    public SmallfryEnemyBrain brain;
     float attackCooldown;
-    enum States
-    {
-        Idle,
-        Active
-    }
+
     public override void Start()
     {
         base.Start();
+        brain = new(this);
         agent.speed = 0;
     }
     public override void Update()
@@ -26,35 +25,7 @@ public class SmallfryEnemy : EnemyAI
         if (targetPlayer != null && targetPlayer.isPlayerDead) targetPlayer = null;
         if (attackCooldown > 0) attackCooldown -= Time.deltaTime;
     }
-    public override void DoAIInterval()
-    {
-        base.DoAIInterval();
-        switch (currentBehaviourStateIndex)
-        {
-            case (int)States.Idle: 
-                Idle();
-                break;
-            case (int)States.Active:
-                Active();
-                break;
-        }
-    }
-    public void Idle()
-    {
-        var colliders = Physics.OverlapSphere(transform.position, 25, LayerMask.GetMask("Player"), QueryTriggerInteraction.Collide);
-        foreach (Collider c in colliders)
-        {
-            if (c.gameObject.TryGetComponent(out PlayerControllerB player) && player.isPlayerControlled && !player.isPlayerDead)
-            {
-                targetPlayer = player;
-                agent.speed = 4;
-                creatureVoice.PlayOneShot(vo[Random.Range(0, vo.Length)]);
-                creatureSFX.volume = 1;
-                creatureAnimator.SetBool("Walk", true);
-                SwitchToBehaviourClientRpc((int)States.Active);
-            }
-        }
-    }
+    public override void DoAIInterval() => brain.CurrentState.AI_Interval();
     public void Active()
     {
         if (targetPlayer == null || Vector3.Distance(targetPlayer.transform.position, transform.position) > 25f)
@@ -68,7 +39,7 @@ public class SmallfryEnemy : EnemyAI
         }
         SetDestinationToPosition(targetPlayer.transform.position);
     }
-    
+
     public override void OnCollideWithPlayer(Collider other)
     {
         base.OnCollideWithPlayer(other);
