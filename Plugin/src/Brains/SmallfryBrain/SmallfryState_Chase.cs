@@ -3,6 +3,7 @@ Smallfry CHASE state
 Purpose:
     Move towards a player and
     enter the attacking state
+    when close enough to attack
 **********************************/
 
 namespace SmallfryBrain;
