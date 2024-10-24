@@ -26,29 +26,25 @@ public class SmallfryState_Chase(SmallfryEnemy ThisAI) : IBrainState
 
     public void ChangeToThisState()
     {
-        ThisAI.SwitchToBehaviourClientRpc((int)SmallfryBrainStates.CHASING);
+        //Allow the agent to move
+        ThisAI.agent.speed = 4;
+        //Play an alert sound
+        ThisAI.creatureVoice.PlayOneShot(ThisAI.vo[Random.Range(0, ThisAI.vo.Length)]);
+        ThisAI.creatureSFX.volume = 1;
+        //Set the walk cycle on
+        ThisAI.creatureAnimator.SetBool("Walk", true);
     }
 
     public void AI_Interval()
     {
-        var colliders = Physics.OverlapSphere(ThisAI.transform.position, 25, LayerMask.GetMask("Player"), QueryTriggerInteraction.Collide);
-        foreach (Collider c in colliders)
+
+        if (ThisAI.targetPlayer == null || ThisAI.targetPlayer.isPlayerDead || Vector3.Distance(ThisAI.targetPlayer.transform.position, ThisAI.transform.position) > 25f)
         {
-            if (c.gameObject.TryGetComponent(out PlayerControllerB player) && player.isPlayerControlled && !player.isPlayerDead)
-            {
-
-                //Target the player and enter the chasing state
-                ThisAI.targetPlayer = player;
-                ((IEnemyBrain)ThisAI.brain).TryChangeBrainToState((int)SmallfryBrainStates.CHASING);
-
-                //Add this to CHASING AI_Interval
-                /*
-                ThisAI.agent.speed = 4;
-                ThisAI.creatureVoice.PlayOneShot(ThisAI.vo[Random.Range(0, ThisAI.vo.Length)]);
-                ThisAI.creatureSFX.volume = 1;
-                ThisAI.creatureAnimator.SetBool("Walk", true);
-                */
-            }
+            ((IEnemyBrain)ThisAI.brain).TryChangeBrainToState((int)SmallfryBrainStates.IDLE);
+            return;
         }
+
+        //Move towards the target player
+        ThisAI.SetDestinationToPosition(ThisAI.targetPlayer.transform.position);
     }
 }
