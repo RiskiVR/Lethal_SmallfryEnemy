@@ -25,8 +25,14 @@ public class SmallfryState_Idle(SmallfryEnemy ThisAI) : IBrainState
 
     public void ChangeToThisState()
     {
+        //Reset our target
         ThisAI.targetPlayer = null;
-        ThisAI.SwitchToBehaviourClientRpc((int)SmallfryBrainStates.IDLE);
+        //Disable walk cycle
+        ThisAI.creatureAnimator.SetBool("Walk", false);
+        //Stop sounds
+        ThisAI.creatureSFX.volume = 0;
+        //Disable movement
+        ThisAI.agent.speed = 0;
     }
 
     public void AI_Interval()
