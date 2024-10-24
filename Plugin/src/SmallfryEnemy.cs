@@ -48,7 +48,7 @@ public class SmallfryEnemy : EnemyAI
             {
                 targetPlayer = player;
                 agent.speed = 4;
-                creatureVoice.PlayOneShot(vo[Random.Range(0, vo.Length)]);
+                PlayVO();
                 creatureSFX.volume = 1;
                 creatureAnimator.SetBool("Walk", true);
                 SwitchToBehaviourClientRpc((int)States.Active);
@@ -68,6 +68,13 @@ public class SmallfryEnemy : EnemyAI
         }
         SetDestinationToPosition(targetPlayer.transform.position);
     }
+
+    [ContextMenu("PlayVO")]
+    public void PlayVO()
+    {
+        creatureVoice.pitch = Random.Range(1f, 1.3f);
+        creatureVoice.PlayOneShot(vo[Random.Range(0, vo.Length)]);
+    }
     
     public override void OnCollideWithPlayer(Collider other)
     {
@@ -78,7 +85,7 @@ public class SmallfryEnemy : EnemyAI
         if (player == null || player != targetPlayer) return;
         Vector3 targetVector = (targetPlayer.transform.position - transform.position).normalized * 5;
         player.DamagePlayer(10, force: targetVector);
-        creatureVoice.PlayOneShot(vo[Random.Range(0, vo.Length)]);
+        PlayVO();
         creatureAnimator.SetInteger("AttackInt", Random.Range(0, 2));
         networkAnimator.SetTrigger("Attack");
         attackCooldown = 0.75f;
@@ -87,9 +94,9 @@ public class SmallfryEnemy : EnemyAI
     public override void HitEnemy(int force = 1, PlayerControllerB playerWhoHit = null, bool playHitSFX = false, int hitID = -1)
     {
         base.HitEnemy(force, playerWhoHit, playHitSFX, hitID);
-        Plugin.Logger.LogInfo($"Hit force: {force}");
+        if (isEnemyDead) return;
         enemyHP -= force;
-        creatureVoice.PlayOneShot(vo[Random.Range(0, vo.Length)]);
+        PlayVO();
         if (enemyHP <= 0) KillEnemyOnOwnerClient();
     }
 
