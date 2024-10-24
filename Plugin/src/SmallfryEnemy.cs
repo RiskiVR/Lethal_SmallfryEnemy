@@ -31,7 +31,7 @@ public class SmallfryEnemy : EnemyAI
         base.DoAIInterval();
         switch (currentBehaviourStateIndex)
         {
-            case (int)States.Idle: 
+            case (int)States.Idle:
                 Idle();
                 break;
             case (int)States.Active:
@@ -75,20 +75,43 @@ public class SmallfryEnemy : EnemyAI
         creatureVoice.pitch = Random.Range(1f, 1.3f);
         creatureVoice.PlayOneShot(vo[Random.Range(0, vo.Length)]);
     }
-    
+
     public override void OnCollideWithPlayer(Collider other)
     {
         base.OnCollideWithPlayer(other);
+
+        Plugin.Logger.LogInfo("Smallfry has collided with a player");
+
+        //Check if the attack cooldown is running
         if (attackCooldown > 0f) return;
+        //Check if smallfry is dead
         if (isEnemyDead) return;
+
+        Plugin.Logger.LogInfo("Attack is off cooldown and Smallfry is alive");
+
+        //Get the player we collided with
+        //Exit if its not the target or if is not a valid player
         PlayerControllerB player = MeetsStandardPlayerCollisionConditions(other);
         if (player == null || player != targetPlayer) return;
+
+        Plugin.Logger.LogInfo("Player is our target");
+
+        //This is supposed to create a knock back vector to apply alongside the damage
+        //But it seems to do nothing. Todo: look into PlayerControllerB.DamagePlayer
         Vector3 targetVector = (targetPlayer.transform.position - transform.position).normalized * 5;
         player.DamagePlayer(10, force: targetVector);
         PlayVO();
+
+        //This picks a random attack animation and sets the animator.
+        //It'll show on clients because its sync'd via the network animator
+        //And this value is serializable across the network, yay!
         creatureAnimator.SetInteger("AttackInt", Random.Range(0, 2));
         networkAnimator.SetTrigger("Attack");
+
+        //Sets Smallfry's attack on cooldown for this long in seconds
         attackCooldown = 0.75f;
+
+        Plugin.Logger.LogInfo("All code in OnCollidWithPlayer has run");
     }
 
     public override void HitEnemy(int force = 1, PlayerControllerB playerWhoHit = null, bool playHitSFX = false, int hitID = -1)
