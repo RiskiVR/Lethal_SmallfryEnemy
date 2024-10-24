@@ -83,14 +83,14 @@ public class SmallfryEnemy : EnemyAI
     {
         base.OnCollideWithPlayer(other);
 
-        Plugin.Logger.LogInfo("Smallfry has collided with a player");
+        //Plugin.Logger.LogInfo("Smallfry has collided with a player");
 
         //Check if the attack cooldown is running
         if (attackCooldown > 0f) return;
         //Check if smallfry is dead
         if (isEnemyDead) return;
 
-        Plugin.Logger.LogInfo("Attack is off cooldown and Smallfry is alive");
+        //Plugin.Logger.LogInfo("Attack is off cooldown and Smallfry is alive");
 
         //Get the player we collided with
         //Exit if its not the target or if is not a valid player
@@ -109,7 +109,7 @@ public class SmallfryEnemy : EnemyAI
         //It'll show on clients because its sync'd via the network animator
         //And this value is serializable across the network, yay!
         creatureAnimator.SetInteger("AttackInt", Random.Range(0, 2));
-        networkAnimator.SetTrigger("Attack");
+        creatureAnimator.SetTrigger("Attack");
 
         //Sets Smallfry's attack on cooldown for this long in seconds
         attackCooldown = 0.75f;
