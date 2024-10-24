@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using LethalLib;
+using Unity.Netcode;
 
 namespace BrainInterfaces;
 internal interface IEnemyBrain
@@ -12,8 +14,7 @@ internal interface IEnemyBrain
             return false;
 
         //State is valid and exists
-        CurrentState = AllStates[IncomingState];
-        CurrentState.ChangeToThisState();
+        ChangeToStateServerRPC(IncomingState);
         return true;
     }
     bool IsValidFromThisState(int IncomingState)
@@ -25,5 +26,20 @@ internal interface IEnemyBrain
             return false;
 
         return true;
+    }
+
+    [ClientRpc]
+    void ChangeToStateClientRPC(int IncomingState)
+    {
+        Plugin.logger.LogInfo($"Client changing brain state to {IncomingState}");
+        CurrentState = AllStates[IncomingState];
+        CurrentState.ChangeToThisState();
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    void ChangeToStateServerRPC(int IncomingState)
+    {
+        Plugin.logger.LogInfo($"Requesting server changing brain state to {IncomingState}");
+        ChangeToStateClientRPC(IncomingState);
     }
 }
