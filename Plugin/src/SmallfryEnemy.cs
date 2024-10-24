@@ -43,6 +43,8 @@ public class SmallfryEnemy : EnemyAI
             attackState.SetAttackTarget(player);
         }
 
+        ((IEnemyBrain)brain).TryChangeBrainToState((int)SmallfryBrainStates.ATTACKING);
+
     }
 
     public override void HitEnemy(int force = 1, PlayerControllerB playerWhoHit = null, bool playHitSFX = false, int hitID = -1)
