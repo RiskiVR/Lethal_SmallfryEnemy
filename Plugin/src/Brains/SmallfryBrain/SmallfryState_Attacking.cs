@@ -41,6 +41,7 @@ public class SmallfryState_Attacking(SmallfryEnemy ThisAI) : IBrainState
         ThisAI.creatureVoice.PlayOneShot(ThisAI.vo[Random.Range(0, ThisAI.vo.Length)]);
         ThisAI.creatureAnimator.SetInteger("AttackInt", Random.Range(0, 2));
         //TODO: Run animator RPC from main branch here
+        ThisAI.creatureAnimator.SetTrigger("Attack");
     }
 
     public void AI_Interval()
