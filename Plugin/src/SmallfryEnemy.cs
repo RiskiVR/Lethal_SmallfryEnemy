@@ -1,17 +1,16 @@
 using System.Collections;
 using GameNetcodeStuff;
 using UnityEngine;
-using Unity.Netcode.Components;
 using SmallfryBrain;
+using BrainInterfaces;
 
 namespace SmallfryEnemy;
 
 public class SmallfryEnemy : EnemyAI
 {
-    [SerializeField] public AudioClip[] vo;
-    [SerializeField] public NetworkAnimator networkAnimator;
+    public AudioClip[] vo;
     public SmallfryEnemyBrain brain;
-    float attackCooldown;
+    internal float attackCooldown;
 
     public override void Start()
     {
@@ -22,37 +21,28 @@ public class SmallfryEnemy : EnemyAI
     public override void Update()
     {
         base.Update();
-        if (targetPlayer != null && targetPlayer.isPlayerDead) targetPlayer = null;
         if (attackCooldown > 0) attackCooldown -= Time.deltaTime;
     }
     public override void DoAIInterval() => brain.CurrentState.AI_Interval();
-    public void Active()
-    {
-        if (targetPlayer == null || Vector3.Distance(targetPlayer.transform.position, transform.position) > 25f)
-        {
-            targetPlayer = null;
-            creatureAnimator.SetBool("Walk", false);
-            creatureSFX.volume = 0;
-            agent.speed = 0;
-            SwitchToBehaviourClientRpc((int)States.Idle);
-            return;
-        }
-        SetDestinationToPosition(targetPlayer.transform.position);
-    }
 
     public override void OnCollideWithPlayer(Collider other)
     {
+        //Don't bother if we're dead but not disposed yet
+        if (isEnemyDead)
+            return;
+
         base.OnCollideWithPlayer(other);
-        if (attackCooldown > 0f) return;
-        if (isEnemyDead) return;
+
+        if (attackCooldown > 0f)
+            return;
+
         PlayerControllerB player = MeetsStandardPlayerCollisionConditions(other);
-        if (player == null || player != targetPlayer) return;
-        Vector3 targetVector = (targetPlayer.transform.position - transform.position).normalized * 5;
-        player.DamagePlayer(10, force: targetVector);
-        creatureVoice.PlayOneShot(vo[Random.Range(0, vo.Length)]);
-        creatureAnimator.SetInteger("AttackInt", Random.Range(0, 2));
-        networkAnimator.SetTrigger("Attack");
-        attackCooldown = 0.75f;
+
+        if (brain.AllStates[(int)SmallfryBrainStates.ATTACKING] is SmallfryState_Attacking attackState)
+        {
+            attackState.SetAttackTarget(player);
+        }
+
     }
 
     public override void HitEnemy(int force = 1, PlayerControllerB playerWhoHit = null, bool playHitSFX = false, int hitID = -1)
@@ -61,7 +51,11 @@ public class SmallfryEnemy : EnemyAI
         Plugin.Logger.LogInfo($"Hit force: {force}");
         enemyHP -= force;
         creatureVoice.PlayOneShot(vo[Random.Range(0, vo.Length)]);
-        if (enemyHP <= 0) KillEnemyOnOwnerClient();
+        if (enemyHP <= 0)
+        {
+            ((IEnemyBrain)brain).TryChangeBrainToState((int)SmallfryBrainStates.DEAD);
+            KillEnemyOnOwnerClient();
+        }
     }
 
     public override void KillEnemy(bool destroy = false)
