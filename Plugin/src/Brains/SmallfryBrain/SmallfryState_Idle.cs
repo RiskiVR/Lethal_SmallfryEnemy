@@ -36,18 +36,9 @@ public class SmallfryState_Idle(SmallfryEnemy ThisAI) : IBrainState
         {
             if (c.gameObject.TryGetComponent(out PlayerControllerB player) && player.isPlayerControlled && !player.isPlayerDead)
             {
-
                 //Target the player and enter the chasing state
                 ThisAI.targetPlayer = player;
                 ((IEnemyBrain)ThisAI.brain).TryChangeBrainToState((int)SmallfryBrainStates.CHASING);
-
-                //Add this to CHASING AI_Interval
-                /*
-                ThisAI.agent.speed = 4;
-                ThisAI.creatureVoice.PlayOneShot(ThisAI.vo[Random.Range(0, ThisAI.vo.Length)]);
-                ThisAI.creatureSFX.volume = 1;
-                ThisAI.creatureAnimator.SetBool("Walk", true);
-                */
             }
         }
     }
