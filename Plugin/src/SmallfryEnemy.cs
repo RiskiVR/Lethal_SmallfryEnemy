@@ -59,6 +59,9 @@ public class SmallfryEnemy : EnemyAI
     {
         if (targetPlayer == null || Vector3.Distance(targetPlayer.transform.position, transform.position) > 25f)
         {
+            //This only fires if our target is null or too far away
+            Plugin.Logger.LogInfo($"Player is null or too far {targetPlayer} | Abandoning chase");
+
             targetPlayer = null;
             creatureAnimator.SetBool("Walk", false);
             creatureSFX.volume = 0;
@@ -88,6 +91,7 @@ public class SmallfryEnemy : EnemyAI
         if (isEnemyDead) return;
 
         Plugin.Logger.LogInfo("Attack is off cooldown and Smallfry is alive");
+        Plugin.Logger.LogInfo($"SF is tracking this player: {targetPlayer}");
 
         //Get the player we collided with
         //Exit if its not the target or if is not a valid player
