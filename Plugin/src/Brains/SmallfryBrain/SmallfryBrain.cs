@@ -16,7 +16,10 @@ public class SmallfryEnemyBrain : IEnemyBrain
         currentState = new SmallfryState_Idle(ThisAI);
         _allStates = new()
         {
-            {(int)SmallfryBrainStates.IDLE, CurrentState}
+            {(int)SmallfryBrainStates.IDLE, CurrentState},
+            {(int)SmallfryBrainStates.CHASING, new SmallfryState_Chase(ThisAI)},
+            {(int)SmallfryBrainStates.ATTACKING, new SmallfryState_Attacking(ThisAI)},
+            {(int)SmallfryBrainStates.DEAD, new SmallfryState_Dead()}
         };
     }
 }
