@@ -91,19 +91,18 @@ public class SmallfryEnemy : EnemyAI
         if (isEnemyDead) return;
 
         Plugin.Logger.LogInfo("Attack is off cooldown and Smallfry is alive");
-        Plugin.Logger.LogInfo($"SF is tracking this player: {targetPlayer}");
 
         //Get the player we collided with
         //Exit if its not the target or if is not a valid player
-        PlayerControllerB player = MeetsStandardPlayerCollisionConditions(other);
-        if (player == null || player != targetPlayer) return;
+        PlayerControllerB collidePlayer = MeetsStandardPlayerCollisionConditions(other);
+        if (collidePlayer == null) return;
 
-        Plugin.Logger.LogInfo("Player is our target");
+        Plugin.Logger.LogInfo($"Smallfry is damaging this player {collidePlayer}");
 
         //This is supposed to create a knock back vector to apply alongside the damage
         //But it seems to do nothing. Todo: look into PlayerControllerB.DamagePlayer
-        Vector3 targetVector = (targetPlayer.transform.position - transform.position).normalized * 5;
-        player.DamagePlayer(10, force: targetVector);
+        Vector3 targetVector = (collidePlayer.transform.position - transform.position).normalized * 5;
+        collidePlayer.DamagePlayer(10, force: targetVector);
         PlayVO();
 
         //This picks a random attack animation and sets the animator.
@@ -115,7 +114,7 @@ public class SmallfryEnemy : EnemyAI
         //Sets Smallfry's attack on cooldown for this long in seconds
         attackCooldown = 0.75f;
 
-        Plugin.Logger.LogInfo("All code in OnCollidWithPlayer has run");
+        Plugin.Logger.LogInfo("All code in OnCollideWithPlayer has run");
     }
 
     public override void HitEnemy(int force = 1, PlayerControllerB playerWhoHit = null, bool playHitSFX = false, int hitID = -1)
