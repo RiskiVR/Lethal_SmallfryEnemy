@@ -20,10 +20,16 @@ internal interface IEnemyBrain
     bool IsValidFromThisState(int IncomingState)
     {
         if (!AllStates.TryGetValue(IncomingState, out IBrainState state))
+        {
+            Plugin.logger.LogWarning($"Unable to change to state in EnemyBrain, brain state is not in the dictionary! State ID: {IncomingState}");
             return false;
+        }
 
         if (!CurrentState.ValidChangeStates.Contains(IncomingState))
+        {
+            Plugin.logger.LogWarning($"Unable to change to state in EnemyBrain, brain state is not a valid target for the current state! State ID: {IncomingState}");
             return false;
+        }
 
         return true;
     }
