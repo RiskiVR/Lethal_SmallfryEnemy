@@ -45,6 +45,7 @@ public class SmallfryState_Idle(SmallfryEnemy ThisAI) : IBrainState
                 //Target the player and enter the chasing state
                 ThisAI.targetPlayer = player;
                 ((IEnemyBrain)ThisAI.brain).TryChangeBrainToState((int)SmallfryBrainStates.CHASING);
+                break;
             }
         }
     }
