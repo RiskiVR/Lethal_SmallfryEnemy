@@ -2,6 +2,7 @@ using System.Collections;
 using GameNetcodeStuff;
 using UnityEngine;
 using Unity.Netcode.Components;
+using Unity.Netcode;
 
 namespace SmallfryEnemy;
 
@@ -97,7 +98,7 @@ public class SmallfryEnemy : EnemyAI
         PlayerControllerB collidePlayer = MeetsStandardPlayerCollisionConditions(other);
         if (collidePlayer == null) return;
 
-        Plugin.Logger.LogInfo($"Smallfry is damaging this player {collidePlayer}");
+        Plugin.Logger.LogInfo($"Smallfry is damaging this player {collidePlayer.name}");
 
         //This is supposed to create a knock back vector to apply alongside the damage
         //But it seems to do nothing. Todo: look into PlayerControllerB.DamagePlayer
@@ -109,7 +110,9 @@ public class SmallfryEnemy : EnemyAI
         //It'll show on clients because its sync'd via the network animator
         //And this value is serializable across the network, yay!
         creatureAnimator.SetInteger("AttackInt", Random.Range(0, 2));
-        creatureAnimator.SetTrigger("Attack");
+
+        Plugin.Logger.LogInfo("Calling animation RPC");
+        DoAnimationServerRpc("Attack");
 
         //Sets Smallfry's attack on cooldown for this long in seconds
         attackCooldown = 0.75f;
@@ -152,5 +155,18 @@ public class SmallfryEnemy : EnemyAI
             transform.Rotate(-350f * Time.deltaTime, 0, 0);
             yield return null;
         }
+    }
+
+    [ClientRpc]
+    public void DoAnimationClientRpc(string animationName)
+    {
+        Plugin.Logger.LogInfo($"Running animation for {animationName}");
+        creatureAnimator.SetTrigger(animationName);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void DoAnimationServerRpc(string animationName)
+    {
+        DoAnimationClientRpc(animationName);
     }
 }
