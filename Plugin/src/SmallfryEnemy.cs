@@ -160,13 +160,14 @@ public class SmallfryEnemy : EnemyAI
     [ClientRpc]
     public void DoAnimationClientRpc(string animationName)
     {
-        Plugin.Logger.LogInfo($"Running animation for {animationName}");
+        Plugin.Logger.LogInfo($"Performing this animation {animationName}");
         creatureAnimator.SetTrigger(animationName);
     }
 
     [ServerRpc(RequireOwnership = false)]
     public void DoAnimationServerRpc(string animationName)
     {
+        Plugin.Logger.LogInfo($"Asking the server for this animation {animationName}");
         DoAnimationClientRpc(animationName);
     }
 }
