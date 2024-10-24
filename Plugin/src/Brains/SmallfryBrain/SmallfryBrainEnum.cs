@@ -6,6 +6,5 @@ public enum SmallfryBrainStates
     CHASING,
     ATTACKING,
     STUNNED,
-    DYING,
     DEAD
 }

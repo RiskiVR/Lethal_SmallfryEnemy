@@ -18,7 +18,7 @@ public class SmallfryState_Idle(SmallfryEnemy ThisAI) : IBrainState
     public List<int> ValidChangeStates => [
         (int)SmallfryBrainStates.ATTACKING,
         (int)SmallfryBrainStates.CHASING,
-        (int)SmallfryBrainStates.DYING,
+        (int)SmallfryBrainStates.DEAD,
         (int)SmallfryBrainStates.STUNNED,
     ];
     public SmallfryEnemy ThisAI = ThisAI;
