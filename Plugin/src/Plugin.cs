@@ -69,7 +69,7 @@ namespace SmallfryEnemy {
             // For using our rarity tables, we can use the following:
             // Enemies.RegisterEnemy(SmallfryEnemy, SmallfryEnemyLevelRarities, SmallfryEnemyCustomLevelRarities, SmallfryEnemyTN, SmallfryEnemyTK);
             
-            Logger.LogInfo($"Plugin {PluginInfo.PLUGIN_GUID} is awake :3");
+            Logger.LogInfo($"Plugin {PluginInfo.PLUGIN_NAME} is awake :3");
         }
 
         private static void InitializeNetworkBehaviours() {
