@@ -48,6 +48,6 @@ public partial class SmallfryEnemy : EnemyAI
     {
         Plugin.Logger.LogInfo($"Asking server to change passive VO to Muted:{Muted}");
 
-        PlayVOClientRpc();
+        SetPassiveVOClientRpc(Muted);
     }
 }
