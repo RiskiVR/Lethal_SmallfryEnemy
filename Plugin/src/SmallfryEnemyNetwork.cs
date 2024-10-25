@@ -40,8 +40,7 @@ public partial class SmallfryEnemy : EnemyAI
     {
         Plugin.Logger.LogInfo($"Change passive VO to Muted:{Muted}");
 
-        creatureVoice.pitch = Random.Range(1f, 1.3f);
-        creatureVoice.PlayOneShot(vo[Random.Range(0, vo.Length)]);
+        creatureSFX.mute = Muted;
     }
 
     [ServerRpc(RequireOwnership = false)]
