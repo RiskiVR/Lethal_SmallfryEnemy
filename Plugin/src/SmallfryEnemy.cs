@@ -98,7 +98,7 @@ public class SmallfryEnemy : EnemyAI
         PlayerControllerB collidePlayer = MeetsStandardPlayerCollisionConditions(other);
         if (collidePlayer == null) return;
 
-        Plugin.Logger.LogInfo($"Smallfry is damaging this player {collidePlayer.name}");
+        //Plugin.Logger.LogInfo($"Smallfry is damaging this player {collidePlayer.name}");
 
         //This is supposed to create a knock back vector to apply alongside the damage
         //But it seems to do nothing. Todo: look into PlayerControllerB.DamagePlayer
@@ -111,13 +111,13 @@ public class SmallfryEnemy : EnemyAI
         //And this value is serializable across the network, yay!
         creatureAnimator.SetInteger("AttackInt", Random.Range(0, 2));
 
-        Plugin.Logger.LogInfo("Calling animation RPC");
+        //Plugin.Logger.LogInfo("Calling animation RPC");
         DoAnimationServerRpc("Attack");
 
         //Sets Smallfry's attack on cooldown for this long in seconds
-        attackCooldown = 0.75f;
+        attackCooldown = 1f;
 
-        Plugin.Logger.LogInfo("All code in OnCollideWithPlayer has run");
+        //Plugin.Logger.LogInfo("All code in OnCollideWithPlayer has run");
     }
 
     public override void HitEnemy(int force = 1, PlayerControllerB playerWhoHit = null, bool playHitSFX = false, int hitID = -1)
