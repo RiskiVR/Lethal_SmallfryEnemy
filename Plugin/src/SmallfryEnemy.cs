@@ -61,7 +61,7 @@ public class SmallfryEnemy : EnemyAI
         if (targetPlayer == null || Vector3.Distance(targetPlayer.transform.position, transform.position) > 25f)
         {
             //This only fires if our target is null or too far away
-            Plugin.Logger.LogInfo($"Player is null or too far {targetPlayer} | Abandoning chase");
+            //Plugin.Logger.LogInfo($"Player is null or too far {targetPlayer} | Abandoning chase");
 
             targetPlayer = null;
             creatureAnimator.SetBool("Walk", false);
@@ -72,8 +72,7 @@ public class SmallfryEnemy : EnemyAI
         }
         SetDestinationToPosition(targetPlayer.transform.position);
     }
-
-    [ContextMenu("PlayVO")]
+    
     public void PlayVO()
     {
         creatureVoice.pitch = Random.Range(1f, 1.3f);
