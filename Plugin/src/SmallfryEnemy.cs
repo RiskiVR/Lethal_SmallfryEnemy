@@ -17,6 +17,7 @@ public partial class SmallfryEnemy : EnemyAI
     {
         base.Start();
         agent.speed = 0;
+        creatureSFX.mute = true;
     }
     public override void Update()
     {
@@ -47,7 +48,9 @@ public partial class SmallfryEnemy : EnemyAI
                 targetPlayer = player;
                 agent.speed = 4;
                 PlayVOServerRpc();
-                creatureSFX.volume = 1;
+
+                //Unmute passive noise
+                SetPassiveVOServerRpc(false);
                 creatureAnimator.SetBool("Walk", true);
                 SwitchToBehaviourClientRpc((int)States.Active);
             }
@@ -62,7 +65,9 @@ public partial class SmallfryEnemy : EnemyAI
 
             targetPlayer = null;
             creatureAnimator.SetBool("Walk", false);
-            creatureSFX.volume = 0;
+
+            //Mute passive VO
+            SetPassiveVOServerRpc(true);
             agent.speed = 0;
             SwitchToBehaviourClientRpc((int)States.Idle);
             return;
