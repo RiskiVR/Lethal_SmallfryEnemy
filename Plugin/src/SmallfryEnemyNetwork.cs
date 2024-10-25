@@ -22,7 +22,7 @@ public partial class SmallfryEnemy : EnemyAI
     [ClientRpc]
     public void PlayVOClientRpc()
     {
-        Plugin.Logger.LogInfo("Playing smallfry VO");
+        //Plugin.Logger.LogInfo("Playing smallfry VO");
 
         creatureVoice.pitch = Random.Range(1f, 1.3f);
         creatureVoice.PlayOneShot(vo[Random.Range(0, vo.Length)]);
@@ -31,14 +31,14 @@ public partial class SmallfryEnemy : EnemyAI
     [ServerRpc(RequireOwnership = false)]
     public void PlayVOServerRpc()
     {
-        Plugin.Logger.LogInfo("Asking the server for smallfry VO");
+        //Plugin.Logger.LogInfo("Asking the server for smallfry VO");
         PlayVOClientRpc();
     }
 
     [ClientRpc]
     public void SetPassiveVOClientRpc(bool Muted)
     {
-        Plugin.Logger.LogInfo($"Change passive VO to Muted:{Muted}");
+        //Plugin.Logger.LogInfo($"Change passive VO to Muted:{Muted}");
 
         creatureSFX.mute = Muted;
     }
@@ -46,7 +46,7 @@ public partial class SmallfryEnemy : EnemyAI
     [ServerRpc(RequireOwnership = false)]
     public void SetPassiveVOServerRpc(bool Muted)
     {
-        Plugin.Logger.LogInfo($"Asking server to change passive VO to Muted:{Muted}");
+        //Plugin.Logger.LogInfo($"Asking server to change passive VO to Muted:{Muted}");
 
         SetPassiveVOClientRpc(Muted);
     }
