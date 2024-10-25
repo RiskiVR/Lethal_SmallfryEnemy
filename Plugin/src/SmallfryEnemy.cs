@@ -1,15 +1,12 @@
 using System.Collections;
 using GameNetcodeStuff;
 using UnityEngine;
-using Unity.Netcode.Components;
-using Unity.Netcode;
 
 namespace SmallfryEnemy;
 
-public class SmallfryEnemy : EnemyAI
+public partial class SmallfryEnemy : EnemyAI
 {
     [SerializeField] AudioClip[] vo;
-    [SerializeField] NetworkAnimator networkAnimator;
     float attackCooldown;
     enum States
     {
@@ -49,7 +46,7 @@ public class SmallfryEnemy : EnemyAI
             {
                 targetPlayer = player;
                 agent.speed = 4;
-                PlayVO();
+                PlayVOServerRpc();
                 creatureSFX.volume = 1;
                 creatureAnimator.SetBool("Walk", true);
                 SwitchToBehaviourClientRpc((int)States.Active);
@@ -71,12 +68,6 @@ public class SmallfryEnemy : EnemyAI
             return;
         }
         SetDestinationToPosition(targetPlayer.transform.position);
-    }
-    
-    public void PlayVO()
-    {
-        creatureVoice.pitch = Random.Range(1f, 1.3f);
-        creatureVoice.PlayOneShot(vo[Random.Range(0, vo.Length)]);
     }
 
     public override void OnCollideWithPlayer(Collider other)
@@ -103,7 +94,7 @@ public class SmallfryEnemy : EnemyAI
         //But it seems to do nothing. Todo: look into PlayerControllerB.DamagePlayer
         Vector3 targetVector = (collidePlayer.transform.position - transform.position).normalized * 5;
         collidePlayer.DamagePlayer(10, force: targetVector);
-        PlayVO();
+        PlayVOServerRpc();
 
         //This picks a random attack animation and sets the animator.
         //It'll show on clients because its sync'd via the network animator
@@ -124,7 +115,7 @@ public class SmallfryEnemy : EnemyAI
         base.HitEnemy(force, playerWhoHit, playHitSFX, hitID);
         if (isEnemyDead) return;
         enemyHP -= force;
-        PlayVO();
+        PlayVOServerRpc();
         if (enemyHP <= 0) KillEnemyOnOwnerClient();
     }
 
