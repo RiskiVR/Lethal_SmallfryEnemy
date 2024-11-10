@@ -40,28 +40,42 @@ public partial class SmallfryEnemy : EnemyAI
     }
     public void Idle()
     {
-        var colliders = Physics.OverlapSphere(transform.position, 25, LayerMask.GetMask("Player"), QueryTriggerInteraction.Collide);
-        foreach (Collider c in colliders)
+        if (UpdateTargetSelection())
         {
-            if (c.gameObject.TryGetComponent(out PlayerControllerB player) && player.isPlayerControlled && !player.isPlayerDead)
-            {
-                targetPlayer = player;
-                agent.speed = 4;
-                PlayVOServerRpc();
+            agent.speed = 4;
+            PlayVOServerRpc();
 
-                //Unmute passive noise
-                SetPassiveVOServerRpc(false);
-                creatureAnimator.SetBool("Walk", true);
-                SwitchToBehaviourClientRpc((int)States.Active);
-            }
+            //Unmute passive noise
+            SetPassiveVOServerRpc(false);
+            creatureAnimator.SetBool("Walk", true);
+            SwitchToBehaviourClientRpc((int)States.Active);
         }
+    }
+    protected bool UpdateTargetSelection()
+    {
+        var closestTarget = this.GetClosestPlayer();
+
+        if (closestTarget == null)
+        {
+            targetPlayer = null;
+            return false;
+        }
+
+        if (Vector3.Distance(this.transform.position, closestTarget.transform.position) < 25f)
+        {
+            targetPlayer = closestTarget;
+            return true;
+        }
+
+        targetPlayer = null;
+        return false;
     }
     public void Active()
     {
-        if (targetPlayer == null || Vector3.Distance(targetPlayer.transform.position, transform.position) > 25f)
+        if (targetPlayer == null || Vector3.Distance(transform.position, targetPlayer.transform.position) > 25f)
         {
             //This only fires if our target is null or too far away
-            //Plugin.Logger.LogInfo($"Player is null or too far {targetPlayer} | Abandoning chase");
+            Plugin.Logger.LogInfo($"Player is null or too far {targetPlayer} | Abandoning chase");
 
             targetPlayer = null;
             creatureAnimator.SetBool("Walk", false);
