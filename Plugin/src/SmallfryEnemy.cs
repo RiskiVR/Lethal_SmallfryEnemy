@@ -72,21 +72,24 @@ public partial class SmallfryEnemy : EnemyAI
     }
     public void Active()
     {
-        if (targetPlayer == null || Vector3.Distance(transform.position, targetPlayer.transform.position) > 25f)
+        if (UpdateTargetSelection())
+        {
+            SetDestinationToPosition(targetPlayer.transform.position);
+        }
+        else
         {
             //This only fires if our target is null or too far away
             Plugin.Logger.LogInfo($"Player is null or too far {targetPlayer} | Abandoning chase");
 
-            targetPlayer = null;
+            //targetPlayer = null;
             creatureAnimator.SetBool("Walk", false);
 
             //Mute passive VO
             SetPassiveVOServerRpc(true);
             agent.speed = 0;
             SwitchToBehaviourClientRpc((int)States.Idle);
-            return;
         }
-        SetDestinationToPosition(targetPlayer.transform.position);
+
     }
 
     public override void OnCollideWithPlayer(Collider other)
